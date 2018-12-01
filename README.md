@@ -1,20 +1,48 @@
-# meneto
+# Meneto shopping cart app
 
-## Quick Start
-
-Install Cookiecutter globally:
+The inital Flask skeleton was taken from the following boilerplate:
 
 ```sh
-$ pip install cookiecutter
+https://github.com/realpython/cookiecutter-flask-skeleton.git
 ```
 
-Generate the boilerplate:
+# Installation
+
+Clone the repository to your local machine into the folder for ex. "meneto-test".
+
+Run the following to setup the environment and the project.
 
 ```sh
-$ cookiecutter https://github.com/realpython/cookiecutter-flask-skeleton.git
+$ cs ./meneto-test
+$ ./setup.sh
 ```
 
-Review the set up guides to configure the app:
+# Usage
 
-1. [setup-with-docker.md](setup-with-docker.md)
-1. [setup-without-docker.md](setup-without-docker.md)
+If virtualenv is not activated, activate it using pipenv command:
+
+```sh
+$ pipenv shell
+```
+
+To run the local development server in the activated environment use one of the following commands:
+
+
+```sh
+$ ./entrypoint.sh
+```
+
+### Testing
+
+Without coverage:
+
+```sh
+$ python manage.py test
+```
+
+With coverage:
+
+```sh
+$ python manage.py cov
+```
+
