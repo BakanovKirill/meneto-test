@@ -13,7 +13,7 @@ Clone the repository to your local machine into the folder for ex. "meneto-test"
 Run the following to setup the environment and the project.
 
 ```sh
-$ cs ./meneto-test
+$ cd ./meneto-test
 $ ./setup.sh
 ```
 
