@@ -1,0 +1,75 @@
+{% extends "_base.html" %}
+{% block content %}
+    <div style="display: flex;">
+        <div style="width: 60%;">
+            <h1>Welcome!</h1>
+
+            {% if not current_user.is_authenticated %}
+                <p style="color: red;">Please log in to be able to add products to cart</p>
+            {% endif %}
+            <hr>
+            <br>
+
+            <div style="display: flex;">
+                {% for product in products %}
+                    <div style="margin: 10px; border: 1px solid #000; padding: 5px;">
+                        <p>{{ product.title }}<br> £<span style="font-weight: bold;">{{ product.price }}</span></p>
+                        <p>Bogoff: {% if product.bogof %}YES{% else %}NO{% endif %}</p>
+                        <button class="js-add-to-cart" data-id="{{ product.id }}">Add</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div style="width: 38%; margin-left: 2%;">
+            <p style="font-weight: bold;">Cart</p>
+            <div class="cart">
+                {% if cart %}
+                    {% for item in cart.cart_items %}
+                        <p class="cart-item" data-product="{{ item.product.id }}">
+                            {{ item.product.title }} | Qty: <span class="qty">{{ item.quantity }}</span> | Price:
+                            <span class="price">{{ item.price }}</span>
+                            <span class="remove"></span>
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <p>Total: £<span class="total">{% if cart %}{{ cart.total }}{% else %}0{% endif %}</span></p>
+
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script type="text/javascript">
+        $(() => {
+            $('.js-add-to-cart').on('click', (e) => {
+                let btn = $(e.target), pr_id = btn.data('id');
+                $.ajax({
+                    url: "{{ url_for('main.add_to_cart') }}",
+                    type: "POST",
+                    data: JSON.stringify({'id': pr_id}),
+                    contentType: "application/json",
+                    complete: (result) => {
+                        const data = result.responseJSON.data;
+                        $('.cart').html('');
+                        $.each(data.cart_items, (i, item) => {
+                            let product=item.product;
+                            let html = `
+                                <p class="cart-item" data-product="${product.id}">
+                                    ${product.title} | Qty: <span class="qty">${item.quantity}</span> | Price:
+                                    <span class="price">${item.price}</span>
+                                </p>
+                            `;
+                            $('.cart').append(html);
+                            $('.total').html(data.total);
+                        })
+                    },
+                    statusCode: {
+                        400: function (response) {
+                            alert(response);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
