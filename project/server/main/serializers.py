@@ -1,7 +1,7 @@
 from marshmallow import fields
 
 from project.server import ma
-from project.server.models import Cart, CartItem, Product
+from project.server.models import Product, CartItem, Cart
 
 
 class PriceMixin():

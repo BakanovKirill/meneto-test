@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "222573956171e91033784f78d9f02a8f856ef1147f94e8f650996a71fb6d373a"
+            "sha256": "02ee4062fac08c95529e0eaa4d657efde51252cbdb3f11f527c694289c783897"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -170,6 +170,14 @@
             "index": "pypi",
             "version": "==3.3.7.1"
         },
+        "flask-httpauth": {
+            "hashes": [
+                "sha256:c08b69b302f1aa7ecd0db327809132ef6ca9486a36a9174776da146d1a4adc18",
+                "sha256:f71b7611f385fbdf350e8c430eed17b41c3b2200dc35eae19c1734264b68e31d"
+            ],
+            "index": "pypi",
+            "version": "==3.2.4"
+        },
         "flask-login": {
             "hashes": [
                 "sha256:c815c1ac7b3e35e2081685e389a665f2c74d7e077cb93cecabaea352da4752ec"
@@ -230,6 +238,7 @@
                 "sha256:6a9496209b76463f1dec126ab928919aaf1f55b38beb9219af3fe202f6bbdd12",
                 "sha256:f69932b1e806b38a7818d9a1e918e5821b685715040b48e59c657b3c7961b742"
             ],
+            "markers": "python_version >= '3.3'",
             "version": "==7.2.0"
         },
         "ipython-genutils": {
@@ -389,6 +398,7 @@
         },
         "pycparser": {
             "hashes": [
+                "sha256:0b6e41436247752fb2c70eb0640bbaf34ce585f829480a86ed0e2500c5eb6e8a",
                 "sha256:a988718abfad80b6b157acce7bf130a30876d27603738ac39f140993246b25b3"
             ],
             "version": "==2.19"

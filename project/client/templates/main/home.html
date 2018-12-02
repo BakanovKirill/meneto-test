@@ -2,7 +2,7 @@
 {% block content %}
     <div style="display: flex;">
         <div style="width: 60%;">
-            <h1>Welcome!</h1>
+            <h1>Products</h1>
 
             {% if not current_user.is_authenticated %}
                 <p style="color: red;">Please log in to be able to add products to cart</p>
@@ -15,60 +15,125 @@
                     <div style="margin: 10px; border: 1px solid #000; padding: 5px;">
                         <p>{{ product.title }}<br> £<span style="font-weight: bold;">{{ product.price }}</span></p>
                         <p>Bogoff: {% if product.bogof %}YES{% else %}NO{% endif %}</p>
-                        <button class="js-add-to-cart" data-id="{{ product.id }}">Add</button>
+                        <button class="js-add-to-cart" data-id="{{ product.id }}">Buy</button>
                     </div>
                 {% endfor %}
             </div>
         </div>
         <div style="width: 38%; margin-left: 2%;">
-            <p style="font-weight: bold;">Cart</p>
+            <h2 style="font-weight: bold;">Cart</h2>
             <div class="cart">
-                {% if cart %}
-                    {% for item in cart.cart_items %}
-                        <p class="cart-item" data-product="{{ item.product.id }}">
-                            {{ item.product.title }} | Qty: <span class="qty">{{ item.quantity }}</span> | Price:
-                            <span class="price">{{ item.price }}</span>
-                            <span class="remove"></span>
-                        </p>
-                    {% endfor %}
-                {% endif %}
             </div>
-            <p>Total: £<span class="total">{% if cart %}{{ cart.total }}{% else %}0{% endif %}</span></p>
-
+            <h3>Total: £<span class="total">0</span></h3>
+            {% if current_user.id %}
+                <button class="js-toggle-card">Loyalty card: <span class="crd">{{ current_user.loyalty_card }}</span>
+            {% endif %}
+            </button>
         </div>
     </div>
 {% endblock %}
 {% block js %}
     <script type="text/javascript">
-        $(() => {
-            $('.js-add-to-cart').on('click', (e) => {
-                let btn = $(e.target), pr_id = btn.data('id');
-                $.ajax({
-                    url: "{{ url_for('main.add_to_cart') }}",
-                    type: "POST",
-                    data: JSON.stringify({'id': pr_id}),
-                    contentType: "application/json",
-                    complete: (result) => {
-                        const data = result.responseJSON.data;
-                        $('.cart').html('');
-                        $.each(data.cart_items, (i, item) => {
-                            let product=item.product;
-                            let html = `
-                                <p class="cart-item" data-product="${product.id}">
-                                    ${product.title} | Qty: <span class="qty">${item.quantity}</span> | Price:
+        function updateCart() {
+            $.get("{{ url_for('api.cart') }}", (data) => {
+                $('.cart').html('');
+                $.each(data.cart_items, (i, item) => {
+                    let product = item.product;
+                    let html = $(`
+                                <p class="cart-item">
+                                    ${product.title} |
+                                    <button class="minus">-</button>
+                                    <span class="qty">${item.quantity}</span>
+                                    <button class="plus">+</button>
+                                    | Price:
                                     <span class="price">${item.price}</span>
+                                    <button class="remove">X</button>
                                 </p>
-                            `;
-                            $('.cart').append(html);
-                            $('.total').html(data.total);
-                        })
-                    },
+                            `);
+                    html.data('item', item);
+                    $('.cart').append(html);
+                });
+                $('.total').html(data.total);
+
+            })
+        }
+
+        $(() => {
+            updateCart();
+            $('.js-add-to-cart').on('click', (e) => {
+                let btn = $(e.target),
+                    pr_id = btn.data('id');
+                $.ajax({
+                    url: "{{ url_for('api.add_to_cart') }}",
+                    type: "POST",
+                    data: JSON.stringify({'product': pr_id}),
+                    contentType: "application/json",
                     statusCode: {
                         400: function (response) {
-                            alert(response);
+                            console.log(response);
                         }
                     }
+                }).done((result) => {
+                    updateCart();
                 });
+            });
+            $('body').on('click', '.minus, .plus', (e) => {
+                let $target = $(e.target),
+                    itemEl = $target.parent(),
+                    item = itemEl.data('item');
+                if ($target.hasClass('plus')) {
+                    item.quantity += 1;
+                }
+                else {
+                    item.quantity -= 1;
+                }
+                let jqXHR = $.ajax(
+                    {
+                        url: `/api/cart_item/${item.id}/`,
+                        method: 'PUT',
+                        data: JSON.stringify(item),
+                        contentType: 'application/json'
+                    }
+                )
+                    .done((res) => {
+                        updateCart()
+                    })
+                    .fail((e) => {
+                        console.log(e)
+                    })
+            });
+            $('body').on('click', '.remove', (e) => {
+                let $target = $(e.target),
+                    itemEl = $target.parent(),
+                    item = itemEl.data('item');
+                $.ajax({
+                    url: `/api/cart_item/${item.id}/`,
+                    method: 'DELETE'
+                })
+                    .done((result) => {
+                        updateCart();
+                    })
+                    .fail((result) => {
+                        console.log(result)
+                    })
+
+            })
+            $('.js-toggle-card').on('click', (e) => {
+                let jqXHR = $.ajax(
+                    {
+                        url: `/api/user/{{ current_user.id }}/`,
+                        method: 'PATCH',
+                        data: {},
+                        contentType: 'application/json'
+                    }
+                )
+                    .done((res) => {
+                        updateCart();
+                        $('.crd').text(res.card)
+                    })
+                    .fail((e) => {
+                        console.log(e)
+                    })
             });
         });
     </script>

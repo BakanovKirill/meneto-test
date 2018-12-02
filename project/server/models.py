@@ -50,13 +50,20 @@ class User(db.Model):
 class CartItem(db.Model):
     __tablename__ = 'cart_items'
 
+    # Constants
+    ADD = 'add'
+    SUBTRACT = 'subtract'
+    REMOVE = 'remove'
+    ACTIONS = (ADD, SUBTRACT, REMOVE)
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     quantity = db.Column(db.Integer, default=1)
     price = db.Column(db.Numeric(asdecimal=True, precision=10, scale=2), nullable=False)
 
     cart_id = db.Column(db.Integer, db.ForeignKey('carts.id'), nullable=True)
-    cart = db.relationship('Cart', backref=backref("cart_items", lazy='joined'), lazy=True)
+    cart = db.relationship('Cart', backref=backref("cart_items", lazy='joined', cascade="all, delete-orphan"),
+                           lazy=True)
     product_id = db.Column(db.Integer, db.ForeignKey('products.id'), nullable=True)
     product = db.relationship('Product', backref="cartitem", uselist=False, lazy='joined')
 
