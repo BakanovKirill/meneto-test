@@ -3,6 +3,7 @@
 
 import unittest
 
+import click
 import coverage
 
 from flask.cli import FlaskGroup
@@ -58,9 +59,20 @@ def create_data():
     db.session.commit()
 
 @cli.command()
-def test():
-    """Runs the unit tests without test coverage."""
-    tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
+@click.option('--test_name')
+def test(test_name=None):
+    """
+    Runs the unit tests without test coverage.
+
+    test_name usage below to run single test:
+
+    $ python manage.py test  --test_name=test_api.TestApiBlueprint.test_add_to_cart
+
+    """
+    if not test_name:
+        tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
+    else:
+        tests = unittest.TestLoader().loadTestsFromName('project.tests.%s' % test_name)
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         sys.exit(0)

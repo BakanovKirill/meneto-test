@@ -6,7 +6,7 @@ import unittest
 
 from flask_login import current_user
 
-from base import BaseTestCase
+from project.tests.base import BaseTestCase
 from project.server import bcrypt
 from project.server.models import User
 from project.server.user.forms import LoginForm
@@ -22,9 +22,8 @@ class TestUserBlueprint(BaseTestCase):
                 data=dict(email="ad@min.com", password="admin_user"),
                 follow_redirects=True
             )
-            self.assertIn(b'Welcome', response.data)
+            self.assertIn(b'Cart', response.data)
             self.assertIn(b'Logout', response.data)
-            self.assertIn(b'Members', response.data)
             self.assertTrue(current_user.email == "ad@min.com")
             self.assertTrue(current_user.is_active())
             self.assertEqual(response.status_code, 200)
@@ -102,7 +101,7 @@ class TestUserBlueprint(BaseTestCase):
                           confirm="testing"),
                 follow_redirects=True
             )
-            self.assertIn(b'Welcome', response.data)
+            self.assertIn(b'Cart', response.data)
             self.assertTrue(current_user.email == "test@tester.com")
             self.assertTrue(current_user.is_active())
             self.assertEqual(response.status_code, 200)

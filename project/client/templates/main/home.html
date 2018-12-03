@@ -35,7 +35,7 @@
 {% block js %}
     <script type="text/javascript">
         function updateCart() {
-            $.get("{{ url_for('api.cart') }}", (data) => {
+            $.get("{{ url_for('api.get_cart') }}", (data) => {
                 $('.cart').html('');
                 $.each(data.cart_items, (i, item) => {
                     let product = item.product;

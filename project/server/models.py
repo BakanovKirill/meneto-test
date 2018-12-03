@@ -7,6 +7,7 @@ from flask import current_app
 from sqlalchemy.orm import backref
 
 from project.server import db, bcrypt
+from project.server.user import admin_user_token
 
 
 class User(db.Model):
@@ -42,6 +43,10 @@ class User(db.Model):
 
     def get_id(self):
         return self.id
+
+    def get_token(self):
+        # Hardcoded token
+        return admin_user_token
 
     def __repr__(self):
         return '<User {0}>'.format(self.email)
