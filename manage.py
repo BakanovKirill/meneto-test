@@ -62,7 +62,9 @@ def create_data():
 @click.option('--test_name')
 def test(test_name=None):
     """
-    Runs the unit tests without test coverage.
+    Runs the unit tests without test coverage:
+
+    $ python manage.py test
 
     test_name usage below to run single test:
 
@@ -82,7 +84,12 @@ def test(test_name=None):
 
 @cli.command()
 def cov():
-    """Runs the unit tests with coverage."""
+    """
+    Runs the unit tests with coverage:
+
+    $ python manage.py cov
+
+    """
     tests = unittest.TestLoader().discover('project/tests')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
